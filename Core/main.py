@@ -15,15 +15,7 @@ conn = mysql.connector.connect(
 # 커서 생성
 cursor = conn.cursor()
 # query문 작성
-query = "INSERT INTO top10_up (test) VALUES (%s)"
-
-# 컬럼명
-global company
-global price
-global limit
-global change_price
-global percent
-
+query = "INSERT INTO top10_up (n_date, company, price, `change`, change_price, percent) VALUES (NOW(),%s,%s,%s,%s,%s)"
 
 
 # 웹 드라이버 초기화 (ChromDriver 사용)
@@ -57,22 +49,20 @@ try:
         split_top10 = (i.split(" ",))
         company = split_top10[0]
         price = split_top10[1]
-        limit = split_top10[2]
+        change = split_top10[2]
         change_price = split_top10[3]
         percent = split_top10[4]
-
-    print(company)
-    print(price)
-    print(limit)
-    print(change_price)
-    print(percent)
+        # 데이터베이스에 넣을 data
+        data = (company, price, change, change_price, percent)
+        cursor.execute(query, data)
 
 
-    # #데이터베이스에 삽입될 데이터
-    # data = (top10_up, )
-    # #데이터베이스에 데이터 삽입 후 커밋
-    # cursor.execute(query, data)
-    # conn.commit()
+    conn.commit()
+
+
+
+
+
 
 finally:
     # 드라이버 종료
