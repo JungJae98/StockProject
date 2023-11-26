@@ -11,16 +11,18 @@ def scheduled_job():
     top10_up = []
 
     try:
+        # 웹 드라이버 가져옴
+        driver = setting.web_driver()
         # 네이버 금융 페이지
-        setting.driver.get('https://finance.naver.com/')
+        driver.get('https://finance.naver.com/')
         time.sleep(2)
         # a_tag = TOP종목 내에 있는 상승 버튼
-        a_tag = setting.driver.find_element(By.CSS_SELECTOR, "ul.tab_area.sise_top1 li.tab2 a")
+        a_tag = driver.find_element(By.CSS_SELECTOR, "ul.tab_area.sise_top1 li.tab2 a")
         a_tag.click()
         time.sleep(1)
 
         # up_rows는 상승된 종목들을 가져옴
-        up_rows = setting.driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems2 tr.up')
+        up_rows = driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems2 tr.up')
         # 하위에 있는 th, td 태그를 가져옴
         for row in up_rows:
             header = row.find_element(By.TAG_NAME, 'th').text
@@ -35,13 +37,13 @@ def scheduled_job():
 
     finally:
         # 드라이버 종료
-        setting.driver.quit()
+        driver.quit()
         setting.cursor.close()
         setting.conn.close()
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(scheduled_job, 'cron', hour=0)
+scheduler.add_job(scheduled_job, 'cron', hour=0, minute = 19)
 scheduler.start()
 
 print("Press Ctrl+C to exit")

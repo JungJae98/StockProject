@@ -13,6 +13,12 @@ conn = mysql.connector.connect(
 # 데이터베이스 커서 생성
 cursor = conn.cursor()
 
-# 웹 드라이버 초기화 (ChromDriver 사용)
-service = Service(r'C:\Users\JungJaeHyeon\Desktop\StockProject\Core\chromedriver.exe')
-driver = webdriver.Chrome(service=service)
+def web_driver():
+    # 웹 드라이버 초기화 (ChromDriver 사용)
+    service = Service(r'C:\Users\JungJaeHyeon\Desktop\StockProject\Core\chromedriver.exe')
+    return webdriver.Chrome(service=service)
+
+
+
+# 메일 세팅
+# def mail_Set():
