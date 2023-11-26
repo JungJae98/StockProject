@@ -1,5 +1,5 @@
 import json
-with open(r'../../email.json', 'r') as email_file:
+with open(r'../../../email.json', 'r') as email_file:
     email = json.load(email_file)
 
 # json파일에서 가져온 로그인 정보

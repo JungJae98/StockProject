@@ -39,19 +39,14 @@ def scheduled_job():
         # down_rows는 하락된 종목들을 가져옴
         down_rows = driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems3 tr.down')
         for row in down_rows:
-            # tr태그 내에 있는 th태그와 td태그를 모두 찾음
-            cells = row.find_elements(By.XPATH, ".//th | .//td")
-            # cell의 내용들을 join을 이용하여 한 줄로 출력, 구분자는 공백
-            row_text = ' '.join([cell.text.replace('\n', ' ') for cell in cells])
-            top10_down.append(row_text)
-        print(top10_down)
-
-        for i in top10_down:
-            split_top10 = i.split(" ")
-            # 데이터베이스에 넣을 data
-            data = (split_top10[0], split_top10[1], split_top10[2], split_top10[3], split_top10[4])
+            header = row.find_element(By.TAG_NAME, 'th').text
+            datas = row.find_elements(By.TAG_NAME, 'td')
+            data_cell = datas[1].text.split("\n")
+            # 전달할 데이터
+            data = (header, datas[0].text, data_cell[0], data_cell[1], datas[2].text)
+            print(data)
+            # 데이터베이스에 전달
             cursor.execute(query, data)
-
         conn.commit()
     finally:
         # 드라이버 종료

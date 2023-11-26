@@ -36,24 +36,24 @@ def scheduled_job():
 
         # up_rows는 상승된 종목들을 가져옴
         up_rows = driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems2 tr.up')
+        # 하위에 있는 th, td 태그를 가져옴
         for row in up_rows:
-            cells = row.find_elements(By.XPATH, ".//th | .//td")
-            row_text = ' '.join([cell.text.replace('\n', ' ') for cell in cells])
-            top10_up.append(row_text)
-        #print(top10_up)
-
-        for i in top10_up:
-            split_top10 = i.split(" ")
-            # 데이터베이스에 넣을 data
-            data = (split_top10[0], split_top10[1], split_top10[2], split_top10[3], split_top10[4])
+            header = row.find_element(By.TAG_NAME, 'th').text
+            datas = row.find_elements(By.TAG_NAME, 'td')
+            data_cell = datas[1].text.split("\n")
+            # 전달할 데이터
+            data = (header, datas[0].text, data_cell[0], data_cell[1], datas[2].text)
+            print(data)
+            # 데이터베이스에 전달
             cursor.execute(query, data)
-
         conn.commit()
+
     finally:
         # 드라이버 종료
         driver.quit()
         cursor.close()
         conn.close()
+
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(scheduled_job, 'cron', hour=0)
