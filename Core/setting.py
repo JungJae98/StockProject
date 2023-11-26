@@ -16,5 +16,3 @@ cursor = conn.cursor()
 # 웹 드라이버 초기화 (ChromDriver 사용)
 service = Service(r'C:\Users\JungJaeHyeon\Desktop\StockProject\Core\chromedriver.exe')
 driver = webdriver.Chrome(service=service)
-
-a = 12321312

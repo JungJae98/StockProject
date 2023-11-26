@@ -1,43 +1,27 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
-import mysql.connector
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-
+# 세팅저장
+import setting
 
 def scheduled_job():
-    # MariaDB 연결 설정
-    conn = mysql.connector.connect(
-        host="localhost",
-        user = "stock",
-        password = "admin",
-        database = "stockproject"
-    )
-
-    # 커서 생성
-    cursor = conn.cursor()
     # query문 작성
     query = "INSERT INTO top10_down (n_date, company, price, `change`, change_price, percent) VALUES (NOW(),%s,%s,%s,%s,%s)"
-
-    # 웹 드라이버 초기화 (ChromDriver 사용)
-    service = Service(r'C:\Users\JungJaeHyeon\Desktop\StockProject\Core\chromedriver.exe')
-    driver = webdriver.Chrome(service=service)
 
     top10_down = []
 
     try:
         # 네이버 금융 페이지
-        driver.get('https://finance.naver.com/')
+        setting.driver.get('https://finance.naver.com/')
         time.sleep(2)
 
         # a_tag = TOP종목 내에 있는 하락 버튼
-        a_tag = driver.find_element(By.CSS_SELECTOR, "ul.tab_area.sise_top1 li.tab3 a")
+        a_tag = setting.driver.find_element(By.CSS_SELECTOR, "ul.tab_area.sise_top1 li.tab3 a")
         a_tag.click() # a_tag 클릭
         time.sleep(1)
 
         # down_rows는 하락된 종목들을 가져옴
-        down_rows = driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems3 tr.down')
+        down_rows = setting.driver.find_elements(By.CSS_SELECTOR, 'tbody#_topItems3 tr.down')
         for row in down_rows:
             header = row.find_element(By.TAG_NAME, 'th').text
             datas = row.find_elements(By.TAG_NAME, 'td')
@@ -46,13 +30,13 @@ def scheduled_job():
             data = (header, datas[0].text, data_cell[0], data_cell[1], datas[2].text)
             print(data)
             # 데이터베이스에 전달
-            cursor.execute(query, data)
-        conn.commit()
+            setting.cursor.execute(query, data)
+        setting.conn.commit()
     finally:
         # 드라이버 종료
-        driver.quit()
-        cursor.close()
-        conn.close()
+        setting.driver.quit()
+        setting.cursor.close()
+        setting.conn.close()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(scheduled_job, 'cron', hour=0)
