@@ -1,22 +1,21 @@
-import json
 import setting
 
-with open(r"../../email.json", 'r') as email_file:
-    email = json.load(email_file)
+# 필요한 쿼리문
+query_up = "SELECT * FROM top10_up WHERE n_date = CURDATE()"
+query_down = "SELECT * FROM top10_down WHERE n_date = CURDATE()"
 
-# json파일에서 가져온 로그인 정보
-email_id = email['email_id'] ## 이메일 아이디
-email_pw = email['email_pw'] ## 이메일 비밀번호
+# 데이터베이스에서 데이터 가져오기
+setting.cursor.execute(query_up)
+rows = setting.cursor.fetchall()
+for row in rows:
+    print(row)
 
-## 이메일 아이디 비번 출력 테스트 _S
-print(email_id)
-print(email_pw)
-## 이메일 아이디 비번 출력 테스트 _E
-
-
-# 이메일을 전송 받을 이메일
-print("이메일을 입력하세요.")
-receiver_email = input()
-
-# MIME 메세지 생성
-messa
+# # 메세지 전송 받을 이메일
+# receiver_email = setting.receiver()
+#
+# # 이메일 내용에 담길 것
+# email_body = "내가 추가할 내용 "
+#
+# # 이메일 보내기 위한 함수
+# setting.send_email(receiver_email, email_body)
+#
