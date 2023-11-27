@@ -55,7 +55,7 @@ message["Subject"] = "주식 현황"
 
 def send_email(receiver_email,email_body):
     # 이메일에 본문 추가
-    message.attach(MIMEText(email_body, "plain"))
+    message.attach(MIMEText(email_body, "html"))
     # SMTP 서버에 연결하고 이메일 전송
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
